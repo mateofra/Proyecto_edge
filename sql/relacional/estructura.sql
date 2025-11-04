@@ -7,14 +7,16 @@ DROP TABLE IF EXISTS luchadores;
 CREATE TABLE luchadores (
     fighter_id SERIAL PRIMARY KEY,  -- url
     fighter_name VARCHAR(100) NOT NULL,
+    alias TEXT,                 -- Apodo para luego hacer busquedas?
     birth_date DATE,
     age INT,
-    alias TEXT,                 -- Apodo para luego hacer busquedas?
     country VARCHAR(50),        -- ¿añadir ciudad?
     height DECIMAL(4,2),        -- Ej: 1.85 (metros)
     weight DECIMAL(5,2),        -- Ej: 77.50 (kg)
-    weight_class VARCHAR(50)
     associated_organisation TEXT -- Gym o equipo asociado 
+    weight_class VARCHAR(50)
+    wins INT,
+    losses INT,
 );
 
 -- Crear tabla de eventos
