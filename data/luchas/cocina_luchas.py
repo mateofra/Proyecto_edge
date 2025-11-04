@@ -17,35 +17,33 @@ else:
     # --- 1. Creación de la tabla de eventos ---
 
     # Selecciona las columnas que definen un evento de manera única
-    event_columns = ['url', 'event_title', 'organisation', 'date', 'location']
+    event_columns = [
+        'url',
+        'event_title',
+        'organisation',
+        'date',
+        'location']
     
     # Crea el DataFrame de eventos eliminando las filas duplicadas
     events_df = df[event_columns].drop_duplicates().copy()
 
-    # Crea un 'event_id' único para cada evento. 
-    # Usamos el índice reseteado como un ID simple y numérico.
-    events_df.reset_index(drop=True, inplace=True)
-    events_df['event_id'] = events_df.index
 
     # Reordena las columnas para que 'event_id' sea la primera
-    events_df = events_df[['event_id', 'url', 'event_title', 'organisation', 'date', 'location']]
+    events_df = events_df[['url', 'event_title', 'organisation', 'date', 'location']]
 
     # --- 2. Creación de la tabla de peleas ---
 
     # Para asignar el 'event_id' correcto a cada pelea, fusionamos el DataFrame original
     # con nuestro nuevo DataFrame de eventos. La columna 'url' del evento actúa como clave.
-    fights_df = pd.merge(df, events_df[['url', 'event_id']], on='url', how='left')
+    fights_df = pd.merge(df, events_df[['url']], on='url', how='left')
 
     # Selecciona y reordena las columnas para la tabla de peleas final
     fight_columns = [
         'event_id',
         'match_nr',
         'fighter1_url',
-        'fighter1_name',
         'fighter2_url',
-        'fighter2_name',
-        'fighter1_result',
-        'fighter2_result',
+        'fighter1_result',  # Mantener esta columna
         'win_method',
         'win_details',
         'referee',
@@ -53,6 +51,9 @@ else:
         'time'
     ]
     fights_df = fights_df[fight_columns]
+
+    # Renombrar 'fighter1_result' a 'results' y eliminar 'fighter2_result'
+    fights_df.rename(columns={'fighter1_result': 'results'}, inplace=True)
 
     # --- 3. Guardar los DataFrames en archivos CSV ---
 
