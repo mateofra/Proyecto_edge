@@ -39,7 +39,7 @@ else:
 
     # Selecciona y reordena las columnas para la tabla de peleas final
     fight_columns = [
-        'event_id',
+        'url',
         'match_nr',
         'fighter1_url',
         'fighter2_url',
@@ -54,6 +54,7 @@ else:
 
     # Renombrar 'fighter1_result' a 'results' y eliminar 'fighter2_result'
     fights_df.rename(columns={'fighter1_result': 'results'}, inplace=True)
+    fights_df.rename(columns={'url': 'event_id'}, inplace=True)
 
     # --- 3. Guardar los DataFrames en archivos CSV ---
 
