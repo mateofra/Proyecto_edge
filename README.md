@@ -9,7 +9,7 @@ Para acadar este obxectivo, o alumnado ten que atopar un conxunto de datos dentr
 
 ## Modelo relacional
 
-Utilizando como base a descrición da temática proporcionada, o grupo de traballo localizará os conxuntos de datos necesarios para preparar o contido dunha base de datos que debe de ter cando menos os seguintes elementos:
+Utilizando como base a descrición da temática proporcionada, o grupo de traballo localizará os conxuntos de datos necesarios para preparar o contido dunha base de datos que debe de ter cando menos os seguintes elementos:  
 • Unha táboa que represente unha entidade con un atributo de texto dentro do que sexa necesario facer procuras por palabra clave.  
 - **Biografía do loitador**  
 • Un mínimo de tres táboas en total, relacionadas entre si, con cando menos unha relacion de tipo un a varios e outra de varios a varios.  
