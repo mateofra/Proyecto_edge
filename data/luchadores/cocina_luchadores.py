@@ -26,8 +26,8 @@ def convert_weight_to_kg(weight_str):
         return weight_str
 
 # Define the input and output filenames
-input_filename = 'pro_mma_fighters.csv'
-output_filename = 'pro_mma_fighters_cocinados.csv'
+input_filename = 'data/luchadores/pro_mma_fighters.csv'
+output_filename = 'data/luchadores/pro_mma_fighters_cocinados.csv'
 
 try:
     # Open the input file for reading and the output file for writing

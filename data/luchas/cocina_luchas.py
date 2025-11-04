@@ -2,9 +2,9 @@ import pandas as pd
 import os
 
 # Define los nombres de los archivos de entrada y salida
-input_filename = 'pro_mma_fights.csv'
-events_output_filename = 'events.csv'
-fights_output_filename = 'fights.csv'
+input_filename = 'data/luchas/pro_mma_fights.csv'
+events_output_filename = 'data/luchas/events.csv'
+fights_output_filename = 'data/luchas/fights.csv'
 
 # Verifica si el archivo de entrada existe
 if not os.path.exists(input_filename):
