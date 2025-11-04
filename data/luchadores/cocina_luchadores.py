@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 def convert_height_to_cm(height_str):
     """Convierte la altura del formato 'pies\'pulgadas"' a centímetros."""
@@ -64,6 +65,9 @@ try:
         weight_output_idx = output_header.index('weight')
         output_header[height_output_idx] = 'height_cm'
         output_header[weight_output_idx] = 'weight_kg'
+        
+        losses_output_idx = output_header.index('lossess')
+        output_header[losses_output_idx] = 'losses'
         writer.writerow(output_header)
 
         # Procesa cada fila en el archivo de entrada
