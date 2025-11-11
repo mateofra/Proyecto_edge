@@ -1,46 +1,52 @@
 -- Eliminar tablas si ya existen (en el orden correcto por dependencias)
+DROP TABLE IF EXISTS estilos_luchadores;
+DROP TABLE IF EXISTS estilos;
 DROP TABLE IF EXISTS pelea;
 DROP TABLE IF EXISTS evento;
 DROP TABLE IF EXISTS luchadores;
 
--- Crear tabla de luchadores
 CREATE TABLE luchadores (
-    fighter_id SERIAL PRIMARY KEY,  -- url
+    url TEXT PRIMARY KEY,
     fighter_name VARCHAR(100) NOT NULL,
-    alias TEXT,                 -- Apodo para luego hacer busquedas?
+    nickname VARCHAR(100),
     birth_date DATE,
     age INT,
-    country VARCHAR(50),        -- ¿añadir ciudad?
-    height DECIMAL(4,2),        -- Ej: 1.85 (metros)
-    weight DECIMAL(5,2),        -- Ej: 77.50 (kg)
-    associated_organisation TEXT -- Gym o equipo asociado 
-    weight_class VARCHAR(50)
+    country VARCHAR(100),
+    height_cm NUMERIC(5,2),
+    weight_kg NUMERIC(5,2),
+    association VARCHAR(100),
+    weight_class VARCHAR(50),
     wins INT,
-    losses INT,
-);
+    losses INT);
 
--- Crear tabla de eventos
+
+CREATE table estilos (
+	id SERIAL primary key,
+	nombre VARCHAR(50));
+
+create table estilos_luchadores (
+	luchador_id TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
+	estilo_id INT REFERENCES estilos(id) ON DELETE CASCADE,
+	PRIMARY KEY (luchador_id, estilo_id));
+
 CREATE TABLE evento (
-    event_id SERIAL PRIMARY KEY,  -- url?
+    event_id TEXT PRIMARY KEY,  
     event_title VARCHAR(100) NOT NULL,
     organisation VARCHAR(100),
     date DATE,
     location VARCHAR(255)
 );
 
--- Crear tabla de peleas
 CREATE TABLE pelea (
     pelea_id SERIAL PRIMARY KEY,
-    event_id INT REFERENCES evento(event_id) ON DELETE CASCADE,
+    event_id TEXT REFERENCES evento(event_id) ON DELETE CASCADE,
     ord_fight INT,          -- Orden de la pelea en el evento (1 = Main Event, 2 = Co-Main Event, etc.) 
-    fighter1_id INT REFERENCES luchadores(fighter_id) ON DELETE CASCADE,
-    fighter2_id INT REFERENCES luchadores(fighter_id) ON DELETE CASCADE,
-    fighter1_result VARCHAR(20),  -- el luchador 1 siempre es ganador a no ser que sea un empate o NC
-    fighter2_result VARCHAR(20),
+    fighter1_id TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
+    fighter2_id TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
+    results VARCHAR(50),
     win_method VARCHAR(100),
     win_details VARCHAR(255),
     referee VARCHAR(100),
     round INT,
     time VARCHAR(10)
 );
-

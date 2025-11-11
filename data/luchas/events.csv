@@ -1,4 +1,4 @@
-url,event_title,organisation,date,location
+event_id,event_title,organisation,date,location
 /events/UFC-265-Lewis-vs-Gane-89140,UFC 265 - Lewis vs. Gane,Ultimate Fighting Championship (UFC),"Aug 7, 2021","Toyota Center, Houston, Texas, United States"
 /events/UFC-on-ESPN-28-Hall-vs-Strickland-89161,UFC on ESPN 28 - Hall vs. Strickland,Ultimate Fighting Championship (UFC),"Jul 31, 2021","UFC Apex, Las Vegas, Nevada, United States"
 /events/UFC-on-ESPN-27-Sandhagen-vs-Dillashaw-89119,UFC on ESPN 27 - Sandhagen vs. Dillashaw,Ultimate Fighting Championship (UFC),"Jul 24, 2021","UFC Apex, Las Vegas, Nevada, United States"
@@ -174,7 +174,7 @@ url,event_title,organisation,date,location
 /events/UFC-Fight-Night-111-Holm-vs-Correia-58241,UFC Fight Night 111 - Holm vs. Correia,Ultimate Fighting Championship (UFC),"Jun 17, 2017","Singapore Indoor Stadium, Kallang, Singapore, Singapore"
 /events/UFC-Fight-Night-110-Hunt-vs-Lewis-58411,UFC Fight Night 110 - Hunt vs. Lewis,Ultimate Fighting Championship (UFC),"Jun 10, 2017","Vector Arena, Auckland, New Zealand, New Zealand"
 /events/UFC-212-Aldo-vs-Holloway-57993,UFC 212 - Aldo vs. Holloway,Ultimate Fighting Championship (UFC),"Jun 3, 2017","HSBC Arena, Rio de Janeiro, Brazil, Brazil"
-/events/UFC-Fight-Night-109-Gustafsson-vs-Teixeira-58405,UFC Fight Night 109 - Gustafsson vs. Teixeira ,Ultimate Fighting Championship (UFC),"May 28, 2017","Ericsson Globe Arena, Stockholm, Sweden, Sweden"
+/events/UFC-Fight-Night-109-Gustafsson-vs-Teixeira-58405,"UFC Fight Night 109 - Gustafsson vs. Teixeira ",Ultimate Fighting Championship (UFC),"May 28, 2017","Ericsson Globe Arena, Stockholm, Sweden, Sweden"
 /events/UFC-211-Miocic-vs-Dos-Santos-2-57823,UFC 211 - Miocic vs. Dos Santos 2,Ultimate Fighting Championship (UFC),"May 13, 2017","American Airlines Center, Dallas, Texas, United States"
 /events/UFC-Fight-Night-108-Swanson-vs-Lobov-57969,UFC Fight Night 108 - Swanson vs. Lobov,Ultimate Fighting Championship (UFC),"Apr 22, 2017","Bridgestone Arena, Nashville, Tennessee, United States"
 /events/UFC-on-Fox-24-Johnson-vs-Reis-57971,UFC on Fox 24 - Johnson vs. Reis,Ultimate Fighting Championship (UFC),"Apr 15, 2017","Sprint Center, Kansas City, Missouri, United States"
@@ -958,7 +958,7 @@ Hollywood, Florida, United States, United States"
 /events/One-Championship-Quest-for-Power-56771,One Championship - Quest for Power,One Championship,"Jan 14, 2017","Jakarta Convention Center, Jakarta, Indonesia"
 /events/One-Championship-Age-of-Domination-49617,One Championship - Age of Domination,One Championship,"Dec 2, 2016","Mall of Asia Arena, Pasay, Manila, Philippines"
 /events/One-Championship-Defending-Honor-49633,One Championship - Defending Honor,One Championship,"Nov 11, 2016","Singapore Indoor Stadium, Kallang, Singapore"
-/events/One-Championship-State-of-Warriors-53109,One Championship - State of Warriors ,One Championship,"Oct 7, 2016","Thuwunna Indoor Stadium, Yangon, Myanmar, Myanmar"
+/events/One-Championship-State-of-Warriors-53109,"One Championship - State of Warriors ",One Championship,"Oct 7, 2016","Thuwunna Indoor Stadium, Yangon, Myanmar, Myanmar"
 /events/One-Championship-Unbreakable-Warriors-49629,One Championship - Unbreakable Warriors,One Championship,"Sep 2, 2016","Stadium Negara, Kuala Lumpur, Malaysia, Malaysia"
 /events/One-Championship-Titles-and-Titans-49631,One Championship - Titles and Titans,One Championship,"Aug 27, 2016","Istora Senayan, Jakarta, Indonesia, Indonesia"
 /events/One-Championship-Titles-and-Titans-Preliminary-Fight-Night-54809,One Championship - Titles and Titans Preliminary Fight Night,One Championship,"Aug 26, 2016","Jakarta Convention Centre, Jakarta, Indonesia, Indonesia"
