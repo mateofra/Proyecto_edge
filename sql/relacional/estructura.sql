@@ -34,17 +34,17 @@ CREATE TABLE evento (
     event_title VARCHAR(100) NOT NULL,
     organisation VARCHAR(100),
     date DATE,
-    location VARCHAR(255)
-    latitud NUMERIC(3,8)
+    location VARCHAR(255),
+    latitud NUMERIC(3,8),
     longitud NUMERIC(3,8)
 );
 
 CREATE TABLE pelea (
     pelea_id SERIAL PRIMARY KEY,
     event_id TEXT REFERENCES evento(event_id) ON DELETE CASCADE,
-    ord_fight INT,          -- Orden de la pelea en el evento (1 = Main Event, 2 = Co-Main Event, etc.) 
-    fighter1_id TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
-    fighter2_id TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
+    match_nr INT,          
+    fighter1_url TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
+    fighter2_url TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
     results VARCHAR(50),
     win_method VARCHAR(100),
     win_details VARCHAR(255),
