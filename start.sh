@@ -5,4 +5,5 @@ docker start edge-gria-pgsql
 echo Ejecutando contenedor ...
 
 echo Para utilizar la linea de comandos del contenedor ejecuta:
-echo docker start edge-gria-pgsql
+echo docker exec -ti edge-gria-pgsql bash
+
