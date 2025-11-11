@@ -35,8 +35,8 @@ CREATE TABLE evento (
     organisation VARCHAR(100),
     date DATE,
     location VARCHAR(255),
-    latitud NUMERIC(3,8),
-    longitud NUMERIC(3,8)
+    latitud NUMERIC(10, 7),
+    longitud NUMERIC(11, 8)
 );
 
 CREATE TABLE pelea (

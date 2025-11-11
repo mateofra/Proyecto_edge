@@ -3714,7 +3714,7 @@ url,fighter_name,nickname,birth_date,age,country,height_cm,weight_kg,association
 /fighter/Kamal-Shalorus-31151,Kamal Shalorus,Prince of Persia,27/08/1977,43,Iran,172.72,70.31,Kaizen MMA,Lightweight,9,9
 /fighter/Jon-Jones-27944,Jon Jones,Bones,19/07/1987,34,United States,193.04,92.99,Jackson-Wink MMA,Light Heavyweight,26,26
 /fighter/Dan-Moret-52514,Dan Moret,The Hitman,21/11/1986,34,United States,182.88,70.31,Minnesota Martial Arts Academy,Lightweight,15,15
-/fighter/Hunter-Tucker-54564,,,12/02/1986,35,United States,172.72,65.77,Jackson-Wink MMA,Featherweight,6,6
+/fighter/Hunter-Tucker-54564,Hunter Tucker,,12/02/1986,35,United States,172.72,65.77,Jackson-Wink MMA,Featherweight,6,6
 /fighter/Bubba-Bush-29111,Bubba Bush,The Fightin' Texas Aggie,24/07/1985,36,United States,182.88,83.91,Brazos Valley MMA,Middleweight,8,8
 /fighter/Assaf-Batan-267213,Assaf Batan,,,,Israel,0.0,70.31,,Lightweight,1,1
 /fighter/Danilo-Belluardo-128147,Danilo Belluardo,Caterpillar,21/07/1994,27,Italy,180.34,70.31,Aurora MMA,Lightweight,13,13
@@ -3977,7 +3977,7 @@ url,fighter_name,nickname,birth_date,age,country,height_cm,weight_kg,association
 /fighter/Jon-delos-Reyes-58594,Jon delos Reyes,The Heat,19/08/1987,33,United States,165.1,56.7,Countershot MMA,Flyweight,8,8
 /fighter/Adi-Nugroho-232891,Adi  Nugroho,,,,Indonesia,0.0,56.7,Garuda Martial Arts,Flyweight,0,0
 /fighter/Konstantin-Erokhin-98151,Konstantin Erokhin,,02/01/1983,38,Russia,180.34,92.99,Krepost,Light Heavyweight,10,10
-/fighter/Noad-Lahat-35732,,,08/06/1984,37,United States,175.26,65.77,Xtreme Couture,Featherweight,13,13
+/fighter/Noad-Lahat-35732,Noad Lahat,,08/06/1984,37,United States,175.26,65.77,Xtreme Couture,Featherweight,13,13
 /fighter/John-Lewis-230,John Lewis,,16/07/1969,52,United States,182.88,72.57,Lewis,Welterweight,3,3
 /fighter/Nick-Hein-50774,Nick Hein,Sergeant,24/04/1984,37,Germany,167.64,70.31,Tiger Muay Thai,Lightweight,14,14
 /fighter/Kristy-Obst-275819,Kristy Obst,KO,,,Australia,0.0,52.16,Martial Arts and Fight Centre,Strawweight,2,2
@@ -4739,7 +4739,7 @@ url,fighter_name,nickname,birth_date,age,country,height_cm,weight_kg,association
 /fighter/Cung-Le-14883,Cung Le,,25/05/1972,49,United States,177.8,83.91,Cung Le's Universal Strength Headquarters,Middleweight,9,9
 /fighter/Jeremy-Horn-202,Jeremy Horn,Gumby,25/08/1975,45,United States,185.42,83.91,Jeremy Horn's Elite Performance,Middleweight,92,92
 /fighter/Gzim-Selmani-112975,Gzim Selmani,Rezar / The Albanian Psycho,16/06/1994,27,Albania,190.5,119.29,Golden Glory,Heavyweight,4,4
-/fighter/AJ-Matthews-21922,,,23/01/1988,33,United States,180.34,83.91,Blackline MMA,Middleweight,9,9
+/fighter/AJ-Matthews-21922,AJ Mathews,,23/01/1988,33,United States,180.34,83.91,Blackline MMA,Middleweight,9,9
 /fighter/Tim-Cho-221047,Tim Cho,Chotime,,,United States,180.34,70.31,Team Curran,Lightweight,5,5
 /fighter/Samara-Santos-Cunha-203759,Samara Santos Cunha,,10/06/1993,28,Brazil,160.02,52.16,Roxo Strike Team,Strawweight,11,11
 /fighter/Preston-Schick-262517,Preston Schick,,,,United States,0.0,65.77,,Featherweight,2,2
