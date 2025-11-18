@@ -1,10 +1,18 @@
 -- 1. USO DE JOIN. Consultamos el número de victorias que se han obtenido por estilo, ordenado de forma descendente.
+
 SELECT 
     e.nombre AS estilo,
-    SUM(l.wins) AS total_victorias
-FROM estilos e
-JOIN estilos_luchadores el ON e.id = el.estilo_id
-JOIN luchadores l ON el.luchador_id = l.url
+    COUNT(*) AS total_victorias
+FROM 
+	estilos e
+JOIN 
+	estilos_luchadores el ON e.id = el.estilo_id
+JOIN 
+	luchadores l ON el.luchador_id = l.url
+join 
+	pelea p on l.url = p.fighter1_url 
+where
+	p.results NOT IN ('draw', 'NC')
 GROUP BY e.nombre
 ORDER BY total_victorias DESC;
 
@@ -102,7 +110,7 @@ WHERE
     AND l2.url != l4.url                         -- O primeiro opoñente non pode ser o terceiro
     AND p1.pelea_id != p2.pelea_id
     AND p2.pelea_id != p3.pelea_id
-    AND p1_evento.date < p2_evento.date          -- Opcional: engade orde cronolóxica á cadea
+    AND p1_evento.date < p2_evento.date          
     AND p2_evento.date < p3_evento.date;
 
 --  consulta espacial sobre as representacións xeométrica

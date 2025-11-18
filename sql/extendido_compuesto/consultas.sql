@@ -1,4 +1,32 @@
 
+-- 1. Consultamos el número de victorias que se han obtenido por estilo, ordenado de forma descendente.
+SELECT
+    estilo,
+    COUNT(*) AS vitorias_por_estilo
+FROM
+    luchadores_agregado,
+    UNNEST(historial_combates) AS combate,
+    UNNEST(estilos_de_loita) AS estilo
+WHERE
+    combate.resultado = 'win' 
+GROUP BY
+    estilo
+ORDER BY
+    vitorias_por_estilo DESC;
+
+-- 2. USO DE FUNCIÓN DE AGRAGADO COUNT. Consultamos el número de peleas que ha tenido cada luchador, ordenado de forma descendiente.
+
+select 
+	fighter_name,
+	count(*) as victorias_luchador
+from 
+	luchadores_agregado,
+	UNNEST(historial_combates) as combate
+group by 
+	fighter_name 
+order by 
+	victorias_luchador desc
+
 -- 3. luchadores con más de 5 vistorias por sumisión
 SELECT
     l.fighter_name,
@@ -18,11 +46,11 @@ ORDER BY
 
 -- 4. luchadores de brasil o de jiu-jitsu
 
-SELECT fighter_name, country
+SELECT fighter_name, country, estilos_de_loita 
 FROM luchadores_agregado
 WHERE
     country = 'Brazil'
-    OR 'Jiu-Jitsu' = ANY(estilos_de_loita);
+    OR 'jiu-jitsu' = ANY(estilos_de_loita);
 
 -- Consultas Beneficiadas:
     ---Consulta 4 (Jiu-Jitsu ou Brasil):A comprobación de pertenza a un array

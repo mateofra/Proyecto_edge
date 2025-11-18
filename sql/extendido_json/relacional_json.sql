@@ -12,16 +12,15 @@ CREATE TABLE eventos_json (
     cartelera_combates JSONB
 );
 
--- PASO 0: (Opcional pero recomendado) Baleirar a táboa de destino para evitar duplicados se se executa varias veces.
+-- Baleirar a táboa de destino para evitar duplicados se se executa varias veces.
 TRUNCATE TABLE eventos_json;
 
--- PASO 1: Inserir os datos transformados na táboa eventos_json
+-- 1: Inserir os datos transformados na táboa eventos_json
 INSERT INTO eventos_json (event_id, event_title, organisation, date, location, cartelera_combates)
 
 -- Usamos un WITH para construír a nosa estrutura JSON paso a paso
 WITH
-    -- CTE 1: Agregamos os estilos de cada loitador nun array JSON.
-    -- Este é o noso primeiro nivel de agregación.
+    -- Agregamos os estilos de cada loitador nun array JSON.
     estilos_por_luchador AS (
         SELECT
             el.luchador_id,
@@ -35,12 +34,12 @@ WITH
             el.luchador_id
     ),
 
-    -- CTE 2: Construímos un obxecto JSON completo para cada combate individual.
-    -- Aquí combinamos os datos da pelexa, os loitadores e os seus estilos (da CTE anterior).
+    -- 2: Construímos un obxecto JSON para cada combate individual.
+    -- Aquí combinamos os datos da pelexa, os loitadores e os seus estilos.
     combates_json AS (
         SELECT
             p.event_id,
-            -- jsonb_build_object crea un obxecto JSON a partir de pares clave-valor.
+            -- un obxecto JSON a partir de pares clave-valor.
             jsonb_build_object(
                 'match_nr', p.match_nr,
                 'result', p.results,
@@ -49,7 +48,7 @@ WITH
                     'url', l1.url,
                     'name', l1.fighter_name,
                     'country', l1.country,
-                    -- Usamos COALESCE para asegurarnos de que se un loitador non ten estilos, obteña un array baleiro [].
+                    -- COALESCE por si un loitador non ten estilos.
                     'styles', COALESCE(s1.estilos_json, '[]'::jsonb)
                 ),
                 'fighter2', jsonb_build_object(
@@ -58,44 +57,38 @@ WITH
                     'country', l2.country,
                     'styles', COALESCE(s2.estilos_json, '[]'::jsonb)
                 )
-            ) AS combate_obj -- Este é o obxecto JSON que representa un único combate
+            ) AS combate_obj -- o obxecto JSON que representa un único combate
         FROM
             pelea p
-        -- Unimos para obter os datos do loitador 1
         JOIN luchadores l1 ON p.fighter1_url = l1.url
-        -- Unimos para obter os datos do loitador 2
         JOIN luchadores l2 ON p.fighter2_url = l2.url
         -- Usamos LEFT JOIN para os estilos, por se algún loitador non ten estilos definidos
         LEFT JOIN estilos_por_luchador s1 ON l1.url = s1.luchador_id
         LEFT JOIN estilos_por_luchador s2 ON l2.url = s2.luchador_id
     ),
 
-    -- CTE 3: Agregamos todos os obxectos JSON dos combates nun único array por evento.
-    -- Este é o noso nivel final de agregación.
+    -- 3: Agregamos todos os obxectos JSON nun único array por evento.
     cartelera_final AS (
         SELECT
             event_id,
-            -- Agregamos todos os obxectos JSON de combates (combate_obj) nun array JSON por evento.
-            jsonb_agg(combate_obj ORDER BY combate_obj->'match_nr') AS cartelera -- Ordenamos os combates polo seu número
+            jsonb_agg(combate_obj ORDER BY combate_obj->'match_nr') AS cartelera 
+            -- Ordenamos os combates polo seu número
         FROM
             combates_json
         GROUP BY
             event_id
     )
 
--- FINAL SELECT: Unimos os datos do evento co seu array JSON de combates xa construído.
+-- FUnimos os datos do evento co seu array JSON de combates xa construído.
 SELECT
     e.event_id,
     e.event_title,
     e.organisation,
     e.date,
     e.location,
-    -- Se un evento non ten combates, COALESCE asegúrase de que a columna cartelera_combates teña un array baleiro '[]' en lugar de NULL.
     COALESCE(cf.cartelera, '[]'::jsonb)
 FROM
     evento e
--- Usamos LEFT JOIN para incluír eventos que poidan non ter combates rexistrados.
-LEFT JOIN
+-- Usamos JOIN porque esperamos que todos os eventos teñan combates rexistrados.
+JOIN
     cartelera_final cf ON e.event_id = cf.event_id;
-
----

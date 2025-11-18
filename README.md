@@ -53,7 +53,7 @@ Deberase buscar información sobre o uso do formato columnar para as táboas de 
 
 ## Base de datos NoSQL documental: MongoDB
 Debe crearse un cluster de MongoDB seguindo a arquitectura que podes ver na imaxe de abaixo.
-![arquitectura](docs/imgs/img)  
+![arquitectura](docs/imgs/img.png)  
 Importa os datos da túa base de datos usando agregación e o número mínimo de coleccións JSON. Elixe a dirección de agregación e explica cales son as consultas beneficiadas e cales as prexudicadas. Indexa e particiona a colección (ou coleccións) da maneira que creas mais axeitada e despois resolve as consultas propostas na sección 3. Comproba o que ocorre coa execución das consultas se paras unha das máquinas (contedor docker). Fai a comprobación de novo parando dúas das máquinas. Fai probas con distintas opcións de preferencias e compromisos de lectura para ver o impacto que ten no comportamento das consultas cando tes paradas dúas das tres máquinas.
 
 ## Base de datos NoSQL de grafos: Neo4J

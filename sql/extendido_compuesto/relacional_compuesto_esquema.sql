@@ -28,8 +28,8 @@ CREATE TABLE luchadores_agregado (
 );
 
 -- Inserir os datos transformados na nova táboa
-INSERT INTO relacional_extendido.luchadores_agregado (
-    url,
+INSERT INTO relacional_extendido.luchadores_agregado ( -- relacional_extendido é o esquema onde se crea a táboa
+    url,                                               -- cambiar se é necesario
     fighter_name,
     nickname,
     birth_date,
@@ -38,20 +38,21 @@ INSERT INTO relacional_extendido.luchadores_agregado (
     historial_combates
 )
 WITH
--- 1. Agregamos os estilos de cada loitador nun array de texto
+-- 1. Agregamos os estilos de cada loitador
 estilos_agregados AS (
     SELECT
         el.luchador_id,
-        ARRAY_AGG(es.nombre) AS lista_estilos
+        ARRAY_AGG(es.nombre) AS lista_estilos -- Agregamos os nomes dos estilos nun array
     FROM
-        public.estilos_luchadores el
+        public.estilos_luchadores el -- public é o esquema predeterminado, axustar se é necesario
     JOIN
         public.estilos es ON el.estilo_id = es.id
     GROUP BY
         el.luchador_id
 ),
 
--- 2. Preparamos o historial de combates completo para cada loitador
+-- 2. Preparamos o historial de combates
+-- Desde la perspectiva de un luchador
 todos_los_combates AS (
     -- Parte A: Combates onde o loitador é fighter1
     SELECT
@@ -82,7 +83,7 @@ todos_los_combates AS (
         CASE p.results
             WHEN 'win' THEN 'loss'
             WHEN 'loss' THEN 'win'
-            ELSE p.results -- 'draw' e 'no contest' non cambian
+            ELSE p.results -- 'draw' e 'NC' non cambian
         END AS results,
         p.win_method
     FROM
@@ -93,13 +94,18 @@ todos_los_combates AS (
         public.luchadores oponente ON p.fighter1_url = oponente.url
 ),
 
--- 3. Agregamos o historial de combates nun array do noso tipo composto
+-- 3. Agregamos o historial de combates nun array do tipo que definimos
 historiales_agregados AS (
     SELECT
         luchador_url,
         ARRAY_AGG(
-            ROW(event_title, date, oponente_nome, oponente_url, results, win_method)::relacional_extendido.tipo_combate
-            ORDER BY date DESC -- Opcional: ordena os combates do máis recente ao máis antigo
+            ROW(event_title, 
+            date, 
+            oponente_nome, 
+            oponente_url, 
+            results, 
+            win_method)::relacional_extendido.tipo_combate
+            ORDER BY date DESC -- ordenamos por data os combates
         ) AS lista_combates
     FROM
         todos_los_combates
@@ -114,9 +120,9 @@ SELECT
     l.nickname,
     l.birth_date,
     l.country,
-    -- Usamos COALESCE para poñer un array baleiro se un loitador non ten estilos
+    -- Usamos COALESCE por si un loitador non ten estilos
     COALESCE(ea.lista_estilos, '{}'::TEXT[]),
-    -- Usamos COALESCE para poñer un array baleiro se un loitador non ten combates
+    -- Usamos COALESCE por si un loitador non ten combates
     COALESCE(ha.lista_combates, '{}'::relacional_extendido.tipo_combate[])
 FROM
     public.luchadores l
