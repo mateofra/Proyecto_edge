@@ -1,4 +1,4 @@
-id,fighter_name,nickname,birth_date,age,country,height_cm,weight_kg,association,weight_class,wins,losses
+url,fighter_name,nickname,birth_date,age,country,height_cm,weight_kg,association,weight_class,wins,losses
 /fighter/Kharun-Atlangeriev-167431,Kharun Atlangeriev,Predator,05/10/1992,28,Russia,177.8,70.31,OFS Team,Lightweight,11,11
 /fighter/Shojin-Miki-157565,Shojin Miki,Mini Margarito,,,United States,175.26,56.7,HMC Academy,Flyweight,6,6
 /fighter/Ryan-Keenan-33827,Ryan Keenan,Who Dat?,15/06/1985,36,United States,182.88,70.31,Gracie Orlando,Lightweight,6,6
