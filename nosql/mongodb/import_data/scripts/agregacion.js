@@ -1,6 +1,8 @@
+const db = db.getSiblingDB("luchasDB");
+
 db.luchadores.aggregate([
 
-  // 1. Agregar estilos
+  // 1️⃣ Lookup: obtener estilo_id de cada luchador
   {
     $lookup: {
       from: "estilos_luchadores",
@@ -9,11 +11,23 @@ db.luchadores.aggregate([
       as: "estilos_rel"
     }
   },
+
+  // 2️⃣ Lookup: convertir estilo_id en nombre
+  {
+    $lookup: {
+      from: "estilos",
+      localField: "estilos_rel.estilo_id",
+      foreignField: "id",
+      as: "estilos_nombres"
+    }
+  },
+
+  // 3️⃣ Transformar en array de nombres
   {
     $addFields: {
       estilos_de_loita: {
         $map: {
-          input: "$estilos_rel",
+          input: "$estilos_nombres",
           as: "e",
           in: "$$e.nombre"
         }
@@ -21,7 +35,7 @@ db.luchadores.aggregate([
     }
   },
 
-  // 2. Agregar combates donde el luchador es fighter1
+  // 4️⃣ Lookup: combates donde el luchador es fighter1
   {
     $lookup: {
       from: "peleas",
@@ -30,6 +44,8 @@ db.luchadores.aggregate([
       as: "combates_f1"
     }
   },
+
+  // 5️⃣ Lookup: combates donde el luchador es fighter2
   {
     $lookup: {
       from: "peleas",
@@ -39,7 +55,7 @@ db.luchadores.aggregate([
     }
   },
 
-  // 3. Unir combates y transformar resultados
+  // 6️⃣ Unir combates y transformar resultados
   {
     $addFields: {
       historial_combates: {
@@ -85,7 +101,7 @@ db.luchadores.aggregate([
     }
   },
 
-  // 4. Ordenar combates por fecha descendente
+  // 7️⃣ Ordenar combates por fecha descendente
   {
     $addFields: {
       historial_combates: {
@@ -97,7 +113,7 @@ db.luchadores.aggregate([
     }
   },
 
-  // 5. Limitar campos finales
+  // 8️⃣ Limitar campos finales
   {
     $project: {
       url: 1,
@@ -110,7 +126,7 @@ db.luchadores.aggregate([
     }
   },
 
-  // 6. Guardar resultados
+  // 9️⃣ Guardar resultados
   {
     $out: "luchadores_agregados"
   }
