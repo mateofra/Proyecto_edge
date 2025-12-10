@@ -6,93 +6,42 @@ CSV_DIR="/home/alumnobd/host-temp"
 DBNAME="luchasDB"
 MONGOS="m1-mongos"
 MONGOS_PORT=27019
-MONGOS_URI="mongodb://$MONGOS:$MONGOS_PORT/$DBNAME"
 
 echo "==========================================="
-echo "Importando CSVs temporales (_temp.csv)"
+echo "Importando CSVs para hacer la agregacion"
 echo "==========================================="
 
-# Importar CSVs temporales
-for csvfile in "$CSV_DIR"/*_temp.csv; do
-    [ -e "$csvfile" ] || continue
-    filename=$(basename "$csvfile")
-    collection="${filename%.*}"
-
-    echo "Importando $collection desde $filename..."
-    mongoimport --uri "$MONGOS_URI" \
-        --collection "$collection" \
-        --type csv \
-        --headerline \
-        --file "$csvfile" \
-        || { echo "Error importando $filename"; exit 1; }
+docker exec "$MONGOS" bash -c "
+set -e
+for csvfile in $CSV_DIR/data/*.csv; do
+    [ -e \"\$csvfile\" ] || continue
+    filename=\$(basename \"\$csvfile\")
+    collection=\"\${filename%.*}\"
+    echo \"Importando \$collection desde \$filename...\"
+    mongoimport --uri mongodb://localhost:$MONGOS_PORT/$DBNAME \
+                --collection \"\$collection\" \
+                --type csv \
+                --headerline \
+                --file \"\$csvfile\"
 done
-
-echo " -> CSVs temporales importados"
-
-echo "==========================================="
-echo "Creando colección final 'luchadores' con agregación"
-echo "==========================================="
-
-# Agregación y shard de luchadores usando $merge
-docker exec -i $MONGOS mongosh "$MONGOS_URI" <<'EOF'
-db = db.getSiblingDB("luchasDB");
-
-// Agregación con $merge (evita problema de $out y sharding)
-db.luchadores_temp.aggregate([
-    {
-        $lookup: {
-            from: "estilos_luchadores_temp",
-            localField: "id",
-            foreignField: "id_luchador",
-            as: "estilos"
-        }
-    },
-    {
-        $lookup: {
-            from: "estilos_temp",
-            localField: "estilos.id_estilo",
-            foreignField: "id",
-            as: "detalles_estilos"
-        }
-    },
-    {
-        $merge: { into: "luchadores" }
-    }
-]);
-
-// Crear índice hashed y shardear la colección
-db.luchadores.createIndex({ id: "hashed" });
-sh.shardCollection("luchasDB.luchadores", { id: "hashed" });
-EOF
-
-echo " -> Colección 'luchadores' creada y shardeda correctamente"
+"
 
 echo "==========================================="
-echo "Importando y shardando colecciones restantes: peleas y eventos"
+echo "Realizando la agregacion"
 echo "==========================================="
 
-for csvfile in "$CSV_DIR"/peleas.csv "$CSV_DIR"/eventos.csv; do
-    [ -e "$csvfile" ] || continue
-    filename=$(basename "$csvfile")
-    collection="${filename%.*}"
+docker exec "$MONGOS" bash -c "
+mongosh mongodb://localhost:$MONGOS_PORT/$DBNAME $CSV_DIR/scripts/agregacion.js
+"
 
-    echo "Procesando $collection desde $filename..."
+echo "AGREGACION REALIZADA CON EXITO"
 
-    # Crear índice hashed y shardear antes de importar
-    docker exec -i $MONGOS mongosh "$MONGOS_URI" --eval "
-        db = db.getSiblingDB('$DBNAME');
-        if (db.getCollection('$collection').exists()) { db.$collection.drop(); }
-        db.$collection.createIndex({ _id: 'hashed' });
-        sh.shardCollection('$DBNAME.$collection', { _id: 'hashed' });
-    "
+echo "==========================================="
+echo "Aplicando índices y sharding"
+echo "==========================================="
 
-    # Importación CSV
-    mongoimport --uri "$MONGOS_URI" \
-        --collection "$collection" \
-        --type csv \
-        --headerline \
-        --file "$csvfile" \
-        || { echo "Error importando $filename"; exit 1; }
-done
+docker exec "$MONGOS" bash -c "
+mongosh mongodb://localhost:$MONGOS_PORT/$DBNAME $CSV_DIR/scripts/indexado_sharding.js
+"
 
-echo " -> Importación y sharding completados para todas las colecciones"
+echo "INDEXADO + SHARDING COMPLETADO"

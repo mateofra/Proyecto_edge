@@ -3,7 +3,10 @@ set -e
 
 # --- Configuración ---
 NETWORK="network-edge-gria"
-DATA_DIR="/mnt/c/Users/usuario/root/usc/bd/Proyecto_edge/nosql/mongodb/data"
+
+#CAMBIAR ESTO POR VUESTRA RUTA 
+DATA_DIR="/mnt/c/Users/usuario/root/usc/bd/Proyecto_edge/nosql/mongodb/import_data"
+
 CSV_DIR="/home/alumnobd/host-temp"
 
 MACHINES=("m1" "m2" "m3")
@@ -25,6 +28,7 @@ recreate_container() {
     docker rm -f $name 2>/dev/null || true
     docker run --name $name -d \
         --network $NETWORK \
+        -v $DATA_DIR:$CSV_DIR \
         --entrypoint bash mongo:latest -c "sleep infinity"
 }
 
