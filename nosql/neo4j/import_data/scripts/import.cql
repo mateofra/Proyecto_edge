@@ -2,7 +2,7 @@
 // Importar Luchadores
 // --------------------
 CALL apoc.load.jdbc(
-  "jdbc:postgresql://edge-gria-pgsql/postgres?user=alumnobd&password=pwalumnobd",
+  "jdbc:postgresql://edge-gria-pgsql/alumnobd?user=alumnobd&password=pwalumnobd",
   "SELECT url, fighter_name, nickname, birth_date, age, country, height_cm, weight_kg, association, weight_class, wins, losses FROM luchadores"
 ) YIELD row
 CREATE (l:Luchador {
@@ -20,11 +20,11 @@ CREATE (l:Luchador {
   losses: row.losses
 });
 
-// --------------------
+// -------------------- 
 // Importar Estilos
 // --------------------
 CALL apoc.load.jdbc(
-  "jdbc:postgresql://edge-gria-pgsql/postgres?user=alumnobd&password=pwalumnobd",
+  "jdbc:postgresql://edge-gria-pgsql/alumnobd?user=alumnobd&password=pwalumnobd",
   "SELECT id, nombre FROM estilos"
 ) YIELD row
 CREATE (e:Estilo {
@@ -36,7 +36,7 @@ CREATE (e:Estilo {
 // Relacionar Luchadores con Estilos
 // --------------------
 CALL apoc.load.jdbc(
-  "jdbc:postgresql://edge-gria-pgsql/postgres?user=alumnobd&password=pwalumnobd",
+  "jdbc:postgresql://edge-gria-pgsql/alumnobd?user=alumnobd&password=pwalumnobd",
   "SELECT luchador_id, estilo_id FROM estilos_luchadores"
 ) YIELD row
 MATCH (l:Luchador {url: row.luchador_id})
@@ -47,7 +47,7 @@ CREATE (l)-[:TIENE_ESTILO]->(e);
 // Importar Eventos
 // --------------------
 CALL apoc.load.jdbc(
-  "jdbc:postgresql://edge-gria-pgsql/postgres?user=alumnobd&password=pwalumnobd",
+  "jdbc:postgresql://edge-gria-pgsql/alumnobd?user=alumnobd&password=pwalumnobd",
   "SELECT event_id, event_title, organisation, date, location, latitud, longitud FROM evento"
 ) YIELD row
 CREATE (ev:Evento {
@@ -64,7 +64,7 @@ CREATE (ev:Evento {
 // Importar Peleas y relaciones
 // --------------------
 CALL apoc.load.jdbc(
-  "jdbc:postgresql://edge-gria-pgsql/postgres?user=alumnobd&password=pwalumnobd",
+  "jdbc:postgresql://edge-gria-pgsql/alumnobd?user=alumnobd&password=pwalumnobd",
   "SELECT pelea_id, event_id, match_nr, fighter1_url, fighter2_url, results, win_method, win_details, referee, round, time FROM pelea"
 ) YIELD row
 MATCH (ev:Evento {id: row.event_id})
