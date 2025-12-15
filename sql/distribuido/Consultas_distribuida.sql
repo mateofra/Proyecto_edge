@@ -59,6 +59,22 @@ JOIN estilos es ON el.estilo_id = es.id
 WHERE es.nombre = 'jiu-jitsu';
 
 
+SELECT
+    event_title,
+    location,
+    date,
+    ST_MakePoint(longitud, latitud )
+FROM
+    evento
+WHERE
+    ST_DWithin(
+        ST_MakePoint(longitud, latitud)::geography,
+        ST_MakePoint(-115.1728, 36.1025)::geography,-- Las Vegas
+        10000 -- Distancia en metros
+    );
+
+
+
 
 
 
