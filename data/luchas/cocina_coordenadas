@@ -1,0 +1,112 @@
+import pandas as pd
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+import time
+import os
+from tqdm import tqdm
+
+# --- CONFIGURACIÓN DE RUTAS ---
+# Obtener el directorio donde vive el script actual
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+input_csv_path = os.path.join(current_dir, 'events.csv')
+output_csv_path = os.path.join(current_dir, 'events_con_coordenadas.csv')
+
+# --- PARÁMETROS ---
+TIMEOUT_SEGUNDOS = 15
+NUMERO_DE_REINTENTOS = 3
+PAUSA_ENTRE_REINTENTOS = 2
+
+# --- FUNCIÓN AUXILIAR ---
+def geocodificar_con_reintentos(geolocator, query, retries, delay):
+    """
+    Intenta geocodificar una query específica manejando excepciones de timeout.
+    Retorna el objeto location si tiene éxito, o None si no existe o fallan todos los reintentos.
+    """
+    for intento in range(retries):
+        try:
+            # Pausa preventiva para respetar política de API (1 req/seg)
+            time.sleep(1) 
+            return geolocator.geocode(query)
+        except (GeocoderTimedOut, GeocoderServiceError) as e:
+            tqdm.write(f"Intento {intento + 1}/{retries} fallido para '{query}': {e}. Reintentando en {delay}s...")
+            time.sleep(delay)
+    
+    tqdm.write(f"Error: No se pudo conectar para geocodificar '{query}' después de {retries} intentos.")
+    return None
+
+# --- INICIO DEL PROCESO ---
+
+try:
+    print(f"Leyendo el archivo CSV desde: {input_csv_path}")
+    df = pd.read_csv(input_csv_path)
+except FileNotFoundError:
+    print(f"Error: No se encontró el archivo 'events.csv' en: {current_dir}")
+    print("Asegúrate de que el archivo CSV esté en la misma carpeta que este script.")
+    exit()
+
+if 'location' not in df.columns:
+    print("Error: El archivo CSV no contiene una columna llamada 'location'.")
+    exit()
+
+unique_locations = df['location'].str.strip().dropna().unique()
+print(f"Se han encontrado {len(unique_locations)} ubicaciones únicas para geocodificar.")
+
+geolocator = Nominatim(user_agent="proyecto_universitario_mma_local_v1", timeout=TIMEOUT_SEGUNDOS)
+coordenadas_cache = {}
+
+print("\nIniciando el proceso de geocodificación robusta con fallback...")
+
+for location_name in tqdm(unique_locations, desc="Geocodificando ubicaciones"):
+    
+    # 1. Intentar con el nombre completo
+    location_data = geocodificar_con_reintentos(
+        geolocator, 
+        location_name, 
+        NUMERO_DE_REINTENTOS, 
+        PAUSA_ENTRE_REINTENTOS
+    )
+
+    # 2. Estrategia Fallback: Si falla, intentar simplificar el nombre
+    if location_data is None:
+        parts = [p.strip() for p in location_name.split(',')]
+        
+        if len(parts) > 2:
+            simplified_location = ', '.join(parts[1:]) # Quitar la primera parte (ej. Venue)
+            tqdm.write(f"'{location_name}' no encontrado. Intentando fallback: '{simplified_location}'")
+            
+            # Intentar con el nombre simplificado
+            location_data = geocodificar_con_reintentos(
+                geolocator, 
+                simplified_location, 
+                NUMERO_DE_REINTENTOS, 
+                PAUSA_ENTRE_REINTENTOS
+            )
+
+    # 3. Guardar resultados en caché (tupla lat/lon o None/None)
+    if location_data:
+        coordenadas_cache[location_name] = (location_data.latitude, location_data.longitude)
+    else:
+        coordenadas_cache[location_name] = (None, None)
+
+# Aplicar las coordenadas al DataFrame
+print("\nAsignando coordenadas al DataFrame...")
+
+# Mapeamos las coordenadas usando el caché
+coords_list = df['location'].map(lambda loc: coordenadas_cache.get(loc, (None, None)))
+
+df['latitud'] = coords_list.apply(lambda x: x[0])
+df['longitud'] = coords_list.apply(lambda x: x[1])
+
+# Guardar resultados
+print("Guardando los resultados en un archivo CSV...")
+df.to_csv(output_csv_path, index=False, encoding='utf-8-sig')
+
+print("\n¡Proceso completado con éxito!")
+print(f"Los datos con las coordenadas se han guardado en: {output_csv_path}")
+
+no_encontrados = df['latitud'].isna().sum()
+encontrados = len(df) - no_encontrados
+print(f"Resumen: Se procesaron {len(df)} eventos.")
+print(f" -> Coordenadas encontradas para {encontrados} eventos.")
+print(f" -> No se encontraron coordenadas para {no_encontrados} eventos.")
