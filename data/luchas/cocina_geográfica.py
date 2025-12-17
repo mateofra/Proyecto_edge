@@ -51,6 +51,7 @@ for location_name in tqdm(unique_locations, desc="Geocodificando ubicaciones"):
                     simplified_location = ', '.join(parts[1:])
                     # Usamos tqdm.write para no romper la barra de progreso
                     tqdm.write(f"'{location_name}' no encontrado. Intentando con una ubicación simplificada: '{simplified_location}'")
+                    time.sleep(1)  # Pausa para cumplir con la política de uso de Nominatim
                     location_data = geolocator.geocode(simplified_location)
             #guardamos el resultado
     
@@ -74,8 +75,7 @@ for location_name in tqdm(unique_locations, desc="Geocodificando ubicaciones"):
     time.sleep(1)
 
 # añadir coordenadas
-print("\nAñadiendo las coordenadas al DataFrame...")
-df['latitud'] = df['location'].map(lambda loc: coordenadas_cache.get(loc, (None, None))[0])
+df[['latitud', 'longitud']] = df['location'].apply(lambda loc: pd.Series(coordenadas_cache.get(loc, (None, None))))
 df['longitud'] = df['location'].map(lambda loc: coordenadas_cache.get(loc, (None, None))[1])
 
 # guardar los resultados
