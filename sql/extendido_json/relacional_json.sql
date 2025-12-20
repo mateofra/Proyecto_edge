@@ -1,45 +1,43 @@
--- Eliminar a táboa se xa existe
-DROP TABLE IF EXISTS eventos_json;
+-- Crear el esquema si no existe
+create schema if not exists eventos_schema;
 
--- Crear a táboa de eventos con datos agregados en JSONB
-CREATE TABLE eventos_json (
-    event_id TEXT PRIMARY KEY,
-    event_title VARCHAR(100) NOT NULL,
-    organisation VARCHAR(100),
-    date DATE,
-    location VARCHAR(255),
-    -- Agregamos a cartelera de combates como un array JSON
-    cartelera_combates JSONB
+-- Eliminar la tabla si ya existe
+drop table if exists eventos_schema.eventos_json;
+
+-- Crear la tabla de eventos con datos agregados en jsonb
+create table eventos_schema.eventos_json (
+    event_id text primary key,
+    event_title varchar(100) not null,
+    organisation varchar(100),
+    date date,
+    location varchar(255),
+    cartelera_combates jsonb
 );
 
--- Baleirar a táboa de destino para evitar duplicados se se executa varias veces.
-TRUNCATE TABLE eventos_json;
+-- Limpiar la tabla de destino para evitar duplicados si se ejecuta varias veces.
+truncate table if exists eventos_schema.eventos_json;
 
--- 1: Inserir os datos transformados na táboa eventos_json
-INSERT INTO eventos_json (event_id, event_title, organisation, date, location, cartelera_combates)
+-- 1: Insertar los datos transformados en la tabla eventos_json
+insert into eventos_schema.eventos_json (event_id, event_title, organisation, date, location, cartelera_combates)
 
--- Usamos un WITH para construír a nosa estrutura JSON paso a paso
-WITH
-    -- Agregamos os estilos de cada loitador nun array JSON.
-    estilos_por_luchador AS (
-        SELECT
+with
+    -- CTE que agrupa los estilos de lucha por luchador
+    estilos_por_luchador as (
+        select
             el.luchador_id,
-            -- jsonb_agg agrega todos os nomes de estilo nun array JSONB.
-            jsonb_agg(es.nombre) AS estilos_json
-        FROM
+            jsonb_agg(es.nombre) as estilos_json
+        from
             estilos_luchadores el
-        JOIN
-            estilos es ON el.estilo_id = es.id
-        GROUP BY
+        join
+            estilos es on el.estilo_id = es.id
+        group by
             el.luchador_id
     ),
 
-    -- 2: Construímos un obxecto JSON para cada combate individual.
-    -- Aquí combinamos os datos da pelexa, os loitadores e os seus estilos.
-    combates_json AS (
-        SELECT
+    -- CTE que construye el objeto JSON de cada combate con detalles de ambos luchadores
+    combates_json as (
+        select
             p.event_id,
-            -- un obxecto JSON a partir de pares clave-valor.
             jsonb_build_object(
                 'match_nr', p.match_nr,
                 'result', p.results,
@@ -48,47 +46,44 @@ WITH
                     'url', l1.url,
                     'name', l1.fighter_name,
                     'country', l1.country,
-                    -- COALESCE por si un loitador non ten estilos.
-                    'styles', COALESCE(s1.estilos_json, '[]'::jsonb)
+                    'styles', coalesce(s1.estilos_json, '[]'::jsonb)
                 ),
                 'fighter2', jsonb_build_object(
                     'url', l2.url,
                     'name', l2.fighter_name,
                     'country', l2.country,
-                    'styles', COALESCE(s2.estilos_json, '[]'::jsonb)
+                    'styles', coalesce(s2.estilos_json, '[]'::jsonb)
                 )
-            ) AS combate_obj -- o obxecto JSON que representa un único combate
-        FROM
+            ) as combate_obj
+        from
             pelea p
-        JOIN luchadores l1 ON p.fighter1_url = l1.url
-        JOIN luchadores l2 ON p.fighter2_url = l2.url
-        -- Usamos LEFT JOIN para os estilos, por se algún loitador non ten estilos definidos
-        LEFT JOIN estilos_por_luchador s1 ON l1.url = s1.luchador_id
-        LEFT JOIN estilos_por_luchador s2 ON l2.url = s2.luchador_id
+        join luchadores l1 on p.fighter1_url = l1.url
+        join luchadores l2 on p.fighter2_url = l2.url
+        left join estilos_por_luchador s1 on l1.url = s1.luchador_id
+        left join estilos_por_luchador s2 on l2.url = s2.luchador_id
     ),
 
-    -- 3: Agregamos todos os obxectos JSON nun único array por evento.
-    cartelera_final AS (
-        SELECT
+    -- CTE que agrega todos los combates en un array ordenado por número de combate
+    cartelera_final as (
+        select
             event_id,
-            jsonb_agg(combate_obj ORDER BY combate_obj->'match_nr') AS cartelera 
-            -- Ordenamos os combates polo seu número
-        FROM
+            jsonb_agg(combate_obj order by combate_obj->'match_nr') as cartelera
+        from
             combates_json
-        GROUP BY
+        group by
             event_id
     )
 
--- FUnimos os datos do evento co seu array JSON de combates xa construído.
-SELECT
+-- SELECT final que une eventos con sus carteles completas en formato JSONB
+select
     e.event_id,
     e.event_title,
     e.organisation,
     e.date,
     e.location,
-    COALESCE(cf.cartelera, '[]'::jsonb)
-FROM
+    coalesce(cf.cartelera, '[]'::jsonb)
+from
     evento e
--- Usamos JOIN porque esperamos que todos os eventos teñan combates rexistrados.
-JOIN
-    cartelera_final cf ON e.event_id = cf.event_id;
+join
+    cartelera_final cf on e.event_id = cf.event_id;
+

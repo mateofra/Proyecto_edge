@@ -1,54 +1,56 @@
--- Eliminar tablas si ya existen (en el orden correcto por dependencias)
-DROP TABLE IF EXISTS estilos_luchadores;
-DROP TABLE IF EXISTS estilos;
-DROP TABLE IF EXISTS pelea;
-DROP TABLE IF EXISTS evento;
-DROP TABLE IF EXISTS luchadores;
+-- eliminar tablas si ya existen (en el orden correcto por dependencias)
+drop table if exists estilos_luchadores;
+drop table if exists estilos;
+drop table if exists pelea;
+drop table if exists evento;
+drop table if exists luchadores;
 
-CREATE TABLE luchadores (
-    url TEXT PRIMARY KEY,
-    fighter_name VARCHAR(100) NOT NULL,
-    nickname VARCHAR(100),
-    birth_date DATE,
-    age INT,
-    country VARCHAR(100),
-    height_cm NUMERIC(5,2),
-    weight_kg NUMERIC(5,2),
-    association VARCHAR(100),
-    weight_class VARCHAR(50),
-    wins INT,
-    losses INT);
-
-
-CREATE table estilos (
-	id SERIAL primary key,
-	nombre VARCHAR(50));
-
-create table estilos_luchadores (
-	luchador_id TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
-	estilo_id INT REFERENCES estilos(id) ON DELETE CASCADE,
-	PRIMARY KEY (luchador_id, estilo_id));
-
-CREATE TABLE evento (
-    event_id TEXT PRIMARY KEY,  
-    event_title VARCHAR(100) NOT NULL,
-    organisation VARCHAR(100),
-    date DATE,
-    location VARCHAR(255),
-    latitud NUMERIC(10, 7),
-    longitud NUMERIC(11, 8)
+create table luchadores (
+    url text primary key,
+    fighter_name varchar(100) not null,
+    nickname varchar(100),
+    birth_date date,
+    age int,
+    country varchar(100),
+    height_cm numeric(5,2),
+    weight_kg numeric(5,2),
+    association varchar(100),
+    weight_class varchar(50),
+    wins int,
+    losses int
 );
 
-CREATE TABLE pelea (
-    pelea_id SERIAL PRIMARY KEY,
-    event_id TEXT REFERENCES evento(event_id) ON DELETE CASCADE,
-    match_nr INT,          
-    fighter1_url TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
-    fighter2_url TEXT REFERENCES luchadores(url) ON DELETE CASCADE,
-    results VARCHAR(50),
-    win_method VARCHAR(100),
-    win_details VARCHAR(255),
-    referee VARCHAR(100),
-    round INT,
-    time VARCHAR(10)
+create table estilos (
+    id serial primary key,
+    nombre varchar(50)
+);
+
+create table estilos_luchadores (
+    luchador_id text references luchadores(url) on delete cascade,
+    estilo_id int references estilos(id) on delete cascade,
+    primary key (luchador_id, estilo_id)
+);
+
+create table evento (
+    event_id text primary key,  
+    event_title varchar(100) not null,
+    organisation varchar(100),
+    date date,
+    location varchar(255),
+    latitud numeric(10, 7),
+    longitud numeric(11, 8)
+);
+
+create table pelea (
+    pelea_id serial primary key,
+    event_id text references evento(event_id) on delete cascade,
+    match_nr int,          
+    fighter1_url text references luchadores(url) on delete cascade,
+    fighter2_url text references luchadores(url) on delete cascade,
+    results varchar(50),
+    win_method varchar(100),
+    win_details varchar(255),
+    referee varchar(100),
+    round int,
+    time varchar(10)
 );
