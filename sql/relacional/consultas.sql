@@ -115,16 +115,16 @@ where
 
 -- Consulta espacial sobre las representaciones geométricas
 create extension postgis;
-select
+SELECT
     event_title,
     location,
     date,
-    st_makepoint(longitud, latitud)
-from
+    ST_MakePoint(longitud, latitud )
+FROM
     evento
-where
-    st_dwithin(
-        st_makepoint(longitud, latitud)::geography,
-        st_makepoint(-115.1728, 36.1025)::geography,-- Las Vegas
+WHERE
+    ST_DWithin(
+        ST_MakePoint(longitud, latitud)::geography,
+        ST_MakePoint(-115.1728, 36.1025)::geography,-- Las Vegas
         10000 -- Distancia en metros
     );
