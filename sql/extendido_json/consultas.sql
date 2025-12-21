@@ -45,6 +45,7 @@ order by vitorias_por_submision desc;
 select distinct
     luchador->>'name' as fighter_name,
     luchador->>'country' as country
+    luchador->'styles' as styles
 from 
     eventos_schema.eventos_json,
     jsonb_array_elements(cartelera_combates) as combate,

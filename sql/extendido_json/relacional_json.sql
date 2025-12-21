@@ -14,12 +14,10 @@ create table eventos_schema.eventos_json (
     cartelera_combates jsonb
 );
 
--- Limpiar la tabla de destino para evitar duplicados si se ejecuta varias veces.
-truncate table if exists eventos_schema.eventos_json;
+-- SE HA ELIMINADO EL TRUNCATE PORQUE ES INNECESARIO Y DABA ERROR DE SINTAXIS
 
 -- 1: Insertar los datos transformados en la tabla eventos_json
 insert into eventos_schema.eventos_json (event_id, event_title, organisation, date, location, cartelera_combates)
-
 with
     -- CTE que agrupa los estilos de lucha por luchador
     estilos_por_luchador as (
@@ -67,7 +65,7 @@ with
     cartelera_final as (
         select
             event_id,
-            jsonb_agg(combate_obj order by combate_obj->'match_nr') as cartelera
+            jsonb_agg(combate_obj order by (combate_obj->>'match_nr')::int) as cartelera
         from
             combates_json
         group by
@@ -84,6 +82,5 @@ select
     coalesce(cf.cartelera, '[]'::jsonb)
 from
     evento e
-join
+left join -- Cambiado a LEFT JOIN por si hay eventos sin peleas registradas
     cartelera_final cf on e.event_id = cf.event_id;
-
