@@ -2,7 +2,6 @@ const db = db.getSiblingDB("luchasDB");
 
 db.luchadores.aggregate([
 
-  // 1️⃣ Lookup: obtener estilo_id de cada luchador
   {
     $lookup: {
       from: "estilos_luchadores",
@@ -12,7 +11,6 @@ db.luchadores.aggregate([
     }
   },
 
-  // 2️⃣ Lookup: convertir estilo_id en nombre
   {
     $lookup: {
       from: "estilos",
@@ -21,8 +19,7 @@ db.luchadores.aggregate([
       as: "estilos_nombres"
     }
   },
-
-  // 3️⃣ Transformar en array de nombres
+  
   {
     $addFields: {
       estilos_de_loita: {
@@ -35,7 +32,6 @@ db.luchadores.aggregate([
     }
   },
 
-  // 4️⃣ Lookup: combates donde el luchador es fighter1
   {
     $lookup: {
       from: "peleas",
@@ -45,7 +41,6 @@ db.luchadores.aggregate([
     }
   },
 
-  // 5️⃣ Lookup: combates donde el luchador es fighter2
   {
     $lookup: {
       from: "peleas",
@@ -55,7 +50,6 @@ db.luchadores.aggregate([
     }
   },
 
-  // 6️⃣ Unir combates y transformar resultados
   {
     $addFields: {
       historial_combates: {
@@ -65,9 +59,7 @@ db.luchadores.aggregate([
               input: "$combates_f1",
               as: "c",
               in: {
-                evento_titulo: "$$c.event_title",
-                data_combate: "$$c.date",
-                oponente_nome: "$$c.fighter2_name",
+                evento_titulo: "$$c.event_id",
                 oponente_url: "$$c.fighter2_url",
                 resultado: "$$c.results",
                 metodo_vitoria: "$$c.win_method"
@@ -79,9 +71,7 @@ db.luchadores.aggregate([
               input: "$combates_f2",
               as: "c",
               in: {
-                evento_titulo: "$$c.event_title",
-                data_combate: "$$c.date",
-                oponente_nome: "$$c.fighter1_name",
+                evento_titulo: "$$c.event_id",
                 oponente_url: "$$c.fighter1_url",
                 resultado: {
                   $switch: {
@@ -101,7 +91,6 @@ db.luchadores.aggregate([
     }
   },
 
-  // 7️⃣ Ordenar combates por fecha descendente
   {
     $addFields: {
       historial_combates: {
@@ -113,7 +102,6 @@ db.luchadores.aggregate([
     }
   },
 
-  // 8️⃣ Limitar campos finales
   {
     $project: {
       url: 1,
@@ -126,9 +114,15 @@ db.luchadores.aggregate([
     }
   },
 
-  // 9️⃣ Guardar resultados
   {
     $out: "luchadores_agregados"
   }
 
 ]);
+
+
+db.estilos.drop();
+db.estilos_luchadores.drop();
+db.peleas.drop();
+db.eventos.drop();
+db.luchadores.drop();

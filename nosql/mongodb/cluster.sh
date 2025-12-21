@@ -15,14 +15,13 @@ CONFIGSVR="configsvr"
 MONGOS="mongos"
 MONGOS_PORT=27019
 DBNAME="luchasDB"
-SHARD_KEY="id"
+SHARD_KEY="id"  
 
 # Crear red si no existe
 if ! docker network ls --format '{{.Name}}' | grep -q "^$NETWORK$"; then
     docker network create $NETWORK
 fi
 
-# Función para crear contenedores sin mongod autoiniciado
 recreate_container() {
     local name=$1
     docker rm -f $name 2>/dev/null || true
@@ -32,9 +31,6 @@ recreate_container() {
         --entrypoint bash mongo:latest -c "sleep infinity"
 }
 
-# ------------------------
-# Crear contenedores por máquina
-# ------------------------
 for m in "${MACHINES[@]}"; do
     recreate_container "$m-$CONFIGSVR"
     for s in "${SHARDS[@]}"; do
@@ -57,10 +53,12 @@ wait_for_mongo() {
 # Iniciar mongod en config server y shards
 # ------------------------
 for m in "${MACHINES[@]}"; do
-    docker exec -d "$m-$CONFIGSVR" mongod --configsvr --replSet rsConfig --port 27017 --bind_ip_all --dbpath /data/configdb
+    docker exec -d "$m-$CONFIGSVR" mongod --configsvr --replSet rsConfig \
+    --port 27017 --bind_ip_all --dbpath /data/configdb
     for s in "${SHARDS[@]}"; do
-        rsName="rs${s:5}"  # shard1 → rs1
-        docker exec -d "$m-$s" mongod --shardsvr --replSet "$rsName" --port 27017 --bind_ip_all --dbpath /data/db
+        rsName="rs${s:5}"  
+        docker exec -d "$m-$s" mongod --shardsvr --replSet "$rsName" \
+        --port 27017 --bind_ip_all --dbpath /data/db
     done
 done
 

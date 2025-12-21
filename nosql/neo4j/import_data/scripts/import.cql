@@ -3,21 +3,14 @@
 // --------------------
 CALL apoc.load.jdbc(
   "jdbc:postgresql://edge-gria-pgsql/alumnobd?user=alumnobd&password=pwalumnobd",
-  "SELECT url, fighter_name, nickname, birth_date, age, country, height_cm, weight_kg, association, weight_class, wins, losses FROM luchadores"
+  "SELECT url, fighter_name, nickname, birth_date, age, country, height_cm, weight_kg,
+   association, weight_class, wins, losses FROM luchadores"
 ) YIELD row
 CREATE (l:Luchador {
-  url: row.url,
-  nombre: row.fighter_name,
-  nickname: row.nickname,
-  birthDate: row.birth_date,
-  age: row.age,
-  country: row.country,
-  heightCm: row.height_cm,
-  weightKg: row.weight_kg,
-  association: row.association,
-  weightClass: row.weight_class,
-  wins: row.wins,
-  losses: row.losses
+  url: row.url, nombre: row.fighter_name, nickname: row.nickname,
+  birthDate: row.birth_date, age: row.age, country: row.country,
+  heightCm: row.height_cm, weightKg: row.weight_kg, association: row.association,
+  weightClass: row.weight_class, wins: row.wins, losses: row.losses
 });
 
 // -------------------- 
