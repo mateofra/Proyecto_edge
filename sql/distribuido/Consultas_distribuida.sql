@@ -1,3 +1,4 @@
+#Primera consulta
 SELECT 
     e.nombre AS estilo,
     SUM(l.wins) AS total_victorias
@@ -7,7 +8,7 @@ JOIN luchadores l ON el.luchador_id = l.url
 GROUP BY e.nombre
 ORDER BY total_victorias DESC;
 
-
+#Segunda consulta
 SELECT 
     l.fighter_name,
     COALESCE(p1.c1, 0) + COALESCE(p2.c2, 0) AS total_peleas
@@ -24,7 +25,7 @@ LEFT JOIN (
 ) p2 ON l.url = p2.url
 ORDER BY total_peleas DESC;
 
-
+#Tercera consulta
 SELECT
     l.fighter_name,
     COUNT(p.pelea_id) AS vitorias_por_submision
@@ -42,7 +43,7 @@ ORDER BY
     vitorias_por_submision DESC;
 
 
-
+# Cuarta consulta
 SELECT l.fighter_name, l.country, es.nombre 
 FROM luchadores l
 JOIN estilos_luchadores el ON l.url = el.luchador_id
@@ -59,6 +60,7 @@ JOIN estilos es ON el.estilo_id = es.id
 WHERE es.nombre = 'jiu-jitsu';
 
 
+#Consulta espacial
 SELECT
     event_title,
     location,
@@ -72,6 +74,7 @@ WHERE
         ST_MakePoint(-115.1728, 36.1025)::geography,-- Las Vegas
         10000 -- Distancia en metros
     );
+
 
 
 
