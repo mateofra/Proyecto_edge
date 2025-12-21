@@ -23,6 +23,7 @@ echo "========================================="
 # Directorio base del proyecto
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+
 echo "Directorio del proyecto: $PROJECT_DIR"
 echo ""
 
